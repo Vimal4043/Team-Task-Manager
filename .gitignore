@@ -1,0 +1,74 @@
+# Node modules
+node_modules/
+**/node_modules/
+
+# Backend/frontend node_modules (explicit)
+/backend/node_modules/
+/frontend/node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# dotenv environment files (keep .env.example tracked)
+.env
+.env.*.local
+/backend/.env
+/frontend/.env
+
+# Build outputs
+/dist/
+/build/
+/frontend/dist/
+/backend/dist/
+
+# Vite / bundler cache
+.vite/
+.cache/
+node_modules/.vite/
+
+# Uploaded files and temporary storage
+/uploads/
+/backend/uploads/
+/frontend/public/uploads/
+tmp/
+temp/
+
+# Test coverage
+/coverage/
+*.lcov
+
+# TypeScript cache
+*.tsbuildinfo
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Certificates and keys
+*.pem
+*.key
+*.crt
+
+# JetBrains
+*.iml
+out/
+
+# Misc
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+node_modules
+.env
+dist
+build
