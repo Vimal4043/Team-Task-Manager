@@ -2,12 +2,36 @@ import axios from 'axios'
 
 let onUnauthorized = null
 
+const normalizeApiBaseUrl = (value) => {
+  const fallbackUrl = 'http://localhost:5000/api'
+
+  if (!value) {
+    return fallbackUrl
+  }
+
+  const trimmed = value.trim().replace(/\/+$/, '')
+
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed
+  }
+
+  if (trimmed.startsWith('/')) {
+    return trimmed
+  }
+
+  const isLocalHost =
+    /^localhost(?::\d+)?(\/|$)/i.test(trimmed) ||
+    /^127(?:\.\d{1,3}){3}(?::\d+)?(\/|$)/.test(trimmed)
+
+  return `${isLocalHost ? 'http' : 'https'}://${trimmed}`
+}
+
 export const setLogoutHandler = (handler) => {
   onUnauthorized = handler
 }
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: normalizeApiBaseUrl(import.meta.env.VITE_API_URL),
 })
 
 api.interceptors.request.use((config) => {
