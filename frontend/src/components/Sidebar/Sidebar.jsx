@@ -20,6 +20,7 @@ const Sidebar = ({ isOpen, onClose, isMobile = false }) => {
   ];
 
   const visibleItems = items.filter((it) => {
+    if (it.to === '/dashboard' && user?.role !== 'admin') return false;
     if (it.to === '/team' && user?.role !== 'admin') return false;
     return true;
   });

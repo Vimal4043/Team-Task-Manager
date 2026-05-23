@@ -23,9 +23,14 @@ const App = () => {
       <Route path="/auth/login" element={<Login />} />
       <Route path="/auth/signup" element={<Signup />} />
 
-      <Route element={<ProtectedRoutes />}>
+      <Route element={<ProtectedRoutes roles={['admin']} redirectTo="/projects" />}>
         <Route element={<MainLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
+      </Route>
+
+      <Route element={<ProtectedRoutes />}>
+        <Route element={<MainLayout />}>
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:id" element={<ProjectDetails />} />
           <Route path="/tasks" element={<Tasks />} />

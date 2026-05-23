@@ -21,8 +21,8 @@ const Signup = () => {
     try {
       setLoading(true);
       setError('');
-      await signup(values);
-      navigate('/dashboard');
+      const data = await signup(values);
+      navigate(data?.user?.role === 'admin' ? '/dashboard' : '/projects');
     } catch (err) {
       setError(err?.response?.data?.message || 'Unable to sign up');
     } finally {

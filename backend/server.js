@@ -34,7 +34,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/api/health', (req, res) => {
+app.get('/', (req, res) => {
   res.status(200).json({ message: 'API is running' });
 });
 

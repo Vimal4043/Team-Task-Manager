@@ -15,8 +15,8 @@ const Login = () => {
     try {
       setLoading(true);
       setError('');
-      await login(values);
-      navigate('/dashboard');
+      const data = await login(values);
+      navigate(data?.user?.role === 'admin' ? '/dashboard' : '/projects');
     } catch (err) {
       setError(err?.response?.data?.message || 'Unable to login');
     } finally {

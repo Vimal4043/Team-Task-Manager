@@ -8,17 +8,20 @@ const navItemClass = ({ isActive }) =>
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const homePath = user?.role === 'admin' ? '/dashboard' : '/projects';
 
   return (
     <header className="sticky top-0 z-20 border-b border-white/30 bg-white/70 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-        <Link to="/dashboard" className="text-lg font-bold tracking-tight text-slate-900">
+        <Link to={homePath} className="text-lg font-bold tracking-tight text-slate-900">
           Team Task Manager
         </Link>
         <nav className="hidden items-center gap-2 md:flex">
-          <NavLink to="/dashboard" className={navItemClass}>
-            Dashboard
-          </NavLink>
+          {user?.role === 'admin' ? (
+            <NavLink to="/dashboard" className={navItemClass}>
+              Dashboard
+            </NavLink>
+          ) : null}
           <NavLink to="/projects" className={navItemClass}>
             Projects
           </NavLink>
