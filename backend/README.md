@@ -17,11 +17,12 @@
 ## Environment Variables
 
 - PORT
-- NODE_ENV
 - MONGODB_URI
 - JWT_SECRET
 - JWT_EXPIRES_IN
 - CLIENT_URL
+
+`NODE_ENV` is read from the runtime environment in production and does not need to be set in the local `.env` file.
 
 ## Core API Endpoints
 
