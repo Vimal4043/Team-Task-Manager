@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import api from '../../api/axios';
 import { useAuth } from '../../context/AuthContext';
 
 const CreateTask = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const location = useLocation();
   const isEditMode = Boolean(id);
   const { user } = useAuth();
   const [projects, setProjects] = useState([]);
@@ -13,14 +14,14 @@ const CreateTask = () => {
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
   const [loadingForm, setLoadingForm] = useState(isEditMode);
-  const [form, setForm] = useState({
+  const [form, setForm] = useState(() => ({
     title: '',
     description: '',
     assignedTo: '',
-    project: '',
+    project: location?.state?.project || '',
     priority: 'medium',
     dueDate: '',
-  });
+  }));
 
   const todayDate = new Date();
   const minDueDate = new Date(todayDate.getTime() - todayDate.getTimezoneOffset() * 60000)
@@ -64,6 +65,8 @@ const CreateTask = () => {
 
     preload();
   }, [id, isEditMode, user?.role]);
+
+  
 
   const eligibleUsers = (() => {
     if (!form.project) return users;

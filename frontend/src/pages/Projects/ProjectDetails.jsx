@@ -65,6 +65,20 @@ const ProjectDetails = () => {
           <div className="flex items-center gap-2">
             <button
               type="button"
+              onClick={() => navigate('/projects')}
+              className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-700"
+            >
+              Back to Projects
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('/tasks/create', { state: { project: project._id } })}
+              className="rounded-full border border-slate-300 px-4 py-2 text-xs font-semibold text-slate-700"
+            >
+              Add Task
+            </button>
+            <button
+              type="button"
               onClick={() => {
                 setActionError('');
                 navigate(`/projects/${id}/edit`);
