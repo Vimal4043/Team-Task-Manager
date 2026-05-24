@@ -62,6 +62,14 @@ const CreateTask = () => {
     preload();
   }, [id, isEditMode, user?.role]);
 
+  const eligibleUsers = (() => {
+    if (!form.project) return users;
+    const project = projects.find((p) => p._id === form.project);
+    if (!project || !project.members) return [];
+    const memberIds = project.members.map((m) => (m._id ? String(m._id) : String(m)));
+    return users.filter((u) => memberIds.includes(String(u._id)));
+  })();
+
   const submit = async (event) => {
     event.preventDefault();
 
@@ -113,7 +121,7 @@ const CreateTask = () => {
           </select>
           <select required value={form.assignedTo} className="w-full rounded-2xl border border-slate-300 px-3 py-2" onChange={(e) => setForm((p) => ({ ...p, assignedTo: e.target.value }))}>
             <option value="">Assign user</option>
-            {users.map((u) => <option key={u._id} value={u._id}>{u.name}</option>)}
+            {eligibleUsers.map((u) => <option key={u._id} value={u._id}>{u.name}</option>)}
           </select>
         </>
       ) : null}
