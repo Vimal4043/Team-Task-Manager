@@ -1,63 +1,92 @@
-# Team Task Manager
+# 🗂️ Team Task Manager (MERN)
 
-A full-stack team task management application (MERN) with JWT authentication, role-based access (Admin / Member), projects and tasks, and a responsive React frontend powered by a REST API.
+A full-stack team task management application built with the **MERN** stack (MongoDB, Express, React, Node). It includes JWT authentication, role-based access (Admin / Member), projects, tasks, and a responsive React frontend powered by a REST API.
 
-**Built with:** Node.js, Express, MongoDB, Mongoose, React (Vite), Tailwind CSS.
+---
 
---
+## 📋 Table of Contents
 
-**Key features**
-- JWT authentication and secure password hashing
-- Admin / Member roles and route protection
-- Projects and tasks with assignment, status, deadlines, and comments
-- Clean MVC backend structure and reusable React components
-- Clean MVC backend structure and reusable React components
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Getting Started](#-getting-started)
+	- [Prerequisites](#prerequisites)
+	- [Environment Variables](#environment-variables)
+	- [Installation](#installation)
+	- [Running the App](#running-the-app)
+- [API Reference](#-api-reference)
+- [Pages & Routes](#-pages--routes)
+- [Data Models](#-data-models)
+- [Deployment](#-deployment)
 
---
+---
 
-**Repository layout (top level)**
-- backend/ — Express API, models, controllers, middleware
-- frontend/ — React (Vite) app, components, pages, API client
+## ✨ Features
 
---
+### User Features
+- 📝 Register and log in with JWT-based authentication
+- 📁 Create and browse projects
+- ✅ Create, assign, and manage projects and tasks with status and deadlines
+- 👥 Team member management and role-based access
 
-## Prerequisites
+### Admin Features
+- ➕ Create, edit, and delete projects and tasks
+- 🧑‍💼 Manage workspace members
+- 📊 View dashboards and basic KPIs
+
+---
+
+## 🧰 Tech Stack
+
+| Layer       | Technology                                     |
+|-------------|------------------------------------------------|
+| Frontend    | React 19, React Router 7, Vite, Tailwind CSS 4 |
+| Backend     | Node.js, Express                               |
+| Database    | MongoDB with Mongoose                          |
+| Auth        | JSON Web Tokens (JWT), bcryptjs                |
+| Build Tool  | Vite                                           |
+
+---
+
+## 📁 Project Structure
+```
+Team Task Manager/
+├── README.md
+├── backend/
+│   ├── package.json
+│   ├── server.js                # Express app entry point
+│   ├── config/
+│   │   └── db.js                # MongoDB connection
+│   ├── controllers/             # controller logic (auth, users, projects, tasks)
+│   ├── middleware/              # auth, role, and error handlers
+│   ├── models/                  # Mongoose models: User, Project, Task
+│   └── routes/                  # API routes: auth, users, projects, tasks
+└── frontend/
+		├── package.json
+		├── vite.config.js
+		├── public/                  # static assets
+		└── src/
+				├── api/                 # axios client
+				├── components/          # shared UI components
+				├── context/             # AuthContext
+				├── pages/               # pages: Auth, Dashboard, Projects, Tasks, Team
+				└── routes/              # Protected / public route wrappers
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
 - Node.js 18+ and npm (or Yarn)
 - MongoDB (local or hosted)
 
-## Quick start — Local development
+---
 
-1) Backend
+### Environment Variables
 
-```bash
-cd backend
-npm install
-copy .env.example .env
-# Edit backend/.env and set MONGODB_URI, JWT_SECRET, CLIENT_URL (see below)
-npm run dev
-```
-
-Optional: seed sample data
-
-```bash
-npm run seed
-```
-
-2) Frontend
-
-```bash
-cd frontend
-npm install
-copy .env.example .env
-# Set VITE_API_URL to your backend (e.g. http://localhost:5000/api)
-npm run dev
-```
-
---
-
-## Environment variables
-
-Backend (`backend/.env`)
+Create a `.env` file in `backend/` and set:
 
 ```
 MONGODB_URI=your-mongodb-uri
@@ -67,75 +96,151 @@ CLIENT_URL=http://localhost:5173
 PORT=5000
 ```
 
-Frontend (`frontend/.env`)
+Create a `.env` file in `frontend/` and set:
 
 ```
 VITE_API_URL=http://localhost:5000/api
 ```
 
---
+---
 
-## How to run
+### Installation
 
-- Development (backend): `npm run dev` in `backend/` (uses nodemon)
-- Development (frontend): `npm run dev` in `frontend/` (Vite)
-- Production (backend): set env vars and `npm start`
-- Production (frontend): build with `npm run build` and deploy static assets (Vercel, Netlify, etc.)
+1. Install backend dependencies
 
---
+```bash
+cd backend
+npm install
+```
 
-## API quick reference
+2. Install frontend dependencies
 
-Auth
-- POST /api/auth/register — register
-- POST /api/auth/login — login (returns JWT)
-- GET /api/auth/me — current user
+```bash
+cd ../frontend
+npm install
+```
 
-Users (admin)
-- GET /api/users — list users
-- GET /api/users/:id — user details
-- PUT /api/users/:id/role — change role
+---
 
-Projects
-- GET /api/projects
-- GET /api/projects/:id
-- POST /api/projects — (admin)
-- PUT /api/projects/:id — (admin)
-- DELETE /api/projects/:id — (admin)
+### Running the App
 
-Tasks
-- GET /api/tasks
-- GET /api/tasks/:id
-- POST /api/tasks — (admin)
-- PUT /api/tasks/:id
-- DELETE /api/tasks/:id — (admin)
+Start the backend server:
 
---
+```bash
+cd backend
+npm run dev
+```
 
---
+Start the frontend development server:
 
-## Deployment notes
-- Backend: `railway.json` is included for Railway deployments. Ensure required env vars (`MONGODB_URI`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `CLIENT_URL`) are set and use `npm start`.
+```bash
+cd frontend
+npm run dev
+```
+
+Open the frontend at `http://localhost:5173` (Vite default).
+
+---
+
+## 📡 API Reference
+
+### Auth — `/api/auth`
+
+| Method | Endpoint           | Description               | Auth Required |
+|--------|--------------------|---------------------------|---------------|
+| POST   | `/api/auth/register` | Register a new user     | ❌            |
+| POST   | `/api/auth/login`    | Login and get JWT        | ❌            |
+| GET    | `/api/auth/me`       | Get current user         | ✅            |
+
+---
+
+### Users — `/api/users` (admin)
+
+| Method | Endpoint               | Description           | Auth Required |
+|--------|------------------------|-----------------------|---------------|
+| GET    | `/api/users`           | List users            | ✅ Admin      |
+| GET    | `/api/users/:id`       | Get user details      | ✅ Admin      |
+| PUT    | `/api/users/:id/role`  | Change user role      | ✅ Admin      |
+
+---
+
+### Projects — `/api/projects`
+
+| Method | Endpoint                | Description           | Auth Required |
+|--------|-------------------------|-----------------------|---------------|
+| GET    | `/api/projects`         | List projects         | ✅            |
+| GET    | `/api/projects/:id`     | Project details       | ✅            |
+| POST   | `/api/projects`         | Create project        | ✅ Admin      |
+| PUT    | `/api/projects/:id`     | Update project        | ✅ Admin      |
+| DELETE | `/api/projects/:id`     | Delete project        | ✅ Admin      |
+
+---
+
+### Tasks — `/api/tasks`
+
+| Method | Endpoint             | Description            | Auth Required |
+|--------|----------------------|------------------------|---------------|
+| GET    | `/api/tasks`         | List tasks             | ✅            |
+| GET    | `/api/tasks/:id`     | Task details           | ✅            |
+| POST   | `/api/tasks`         | Create task            | ✅ Admin      |
+| PUT    | `/api/tasks/:id`     | Update task            | ✅            |
+| DELETE | `/api/tasks/:id`     | Delete task            | ✅ Admin      |
+
+---
+
+## 🗺️ Pages & Routes (frontend)
+
+| Path                    | Page / Component       | Access        |
+|-------------------------|------------------------|---------------|
+| `/`                     | Redirect to `/dashboard`| Protected     |
+| `/auth/login`           | Login                  | Public (hidden when logged in)
+| `/auth/signup`          | Signup                 | Public (hidden when logged in)
+| `/dashboard`            | Dashboard              | Admin         |
+| `/projects`             | Projects list          | Authenticated |
+| `/projects/:id`         | Project details        | Authenticated |
+| `/tasks`                | Tasks list             | Authenticated |
+| `/team`                 | Workspace/team pages   | Admin         |
+
+---
+
+## 🗃️ Data Models (summary)
+
+### User
+| Field | Type | Description |
+|-------|------|-------------|
+| `name` | String | Full name |
+| `email` | String | Unique email |
+| `password` | String | Hashed password |
+| `role` | String | `admin` or `member` |
+
+### Project
+| Field | Type | Description |
+|-------|------|-------------|
+| `title` | String | Project title |
+| `description` | String | Details |
+| `members` | [ObjectId] | Assigned users |
+
+### Task
+| Field | Type | Description |
+|-------|------|-------------|
+| `title` | String | Task title |
+| `description` | String | Details |
+| `assignee` | ObjectId | Assigned user |
+| `status` | String | `todo`, `in-progress`, `done` |
+
+---
+
+## 🌐 Deployment
+
+- Backend: `railway.json` is included for Railway deployments. Ensure env vars (`MONGODB_URI`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `CLIENT_URL`) are set and run `npm start`.
 - Frontend: `vercel.json` is prepared for SPA routing. Set `VITE_API_URL` to the deployed API URL.
 
---
+---
 
-## Development tips
-- Use Postman/Insomnia to test API endpoints.
-- Frontend Axios client: `frontend/src/api/axios.js` includes an interceptor that attaches the JWT.
+## 👨‍💻 Author
 
---
+Project maintained by Vimal Kumar.
 
-## Contributing
-- Open issues or PRs. Follow existing code style and add tests for new functionality.
+---
 
---
-
-## License
-Add a `LICENSE` file if you intend to open-source this project. For private/internal use, document any internal policies.
-
---
-
-If you'd like, I can also:
-- add a short `backend/.env.example` and `frontend/.env.example` snippet to the repo,
-- or create a `CONTRIBUTING.md` with PR guidelines.
+If you'd like, I can also add `backend/.env.example` and `frontend/.env.example`, or create a `CONTRIBUTING.md` with contribution guidelines.
