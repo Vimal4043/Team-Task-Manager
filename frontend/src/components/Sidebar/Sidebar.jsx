@@ -40,7 +40,7 @@ const Sidebar = ({ isOpen, onClose, isMobile = false }) => {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full border border-white/10 p-2 text-slate-200 transition hover:bg-white/8"
+            className="rounded-full border border-white/10 p-2 text-slate-200 transition hover:bg-white/8 lg:hidden"
             aria-label="Close sidebar"
           >
             <X size={18} />

@@ -43,7 +43,7 @@ const Tasks = () => {
   if (loading) return <Loader label="Loading tasks..." />;
 
   return (
-    <section className="space-y-5">
+    <section className="space-y-5 min-w-0">
       <div className="grid gap-2 md:grid-cols-5">
         <input value={filters.search} onChange={(e) => setFilters((p) => ({ ...p, search: e.target.value }))} placeholder="Search tasks" className="rounded-2xl border border-slate-300 px-3 py-2 text-sm" />
         <select value={filters.status} onChange={(e) => setFilters((p) => ({ ...p, status: e.target.value }))} className="rounded-2xl border border-slate-300 px-3 py-2 text-sm">

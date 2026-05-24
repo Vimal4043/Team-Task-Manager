@@ -118,18 +118,18 @@ const Dashboard = () => {
       <StatsGrid stats={stats} />
 
       <div className="grid gap-6 xl:grid-cols-[1.4fr_0.9fr]">
-        <section className="space-y-4">
+        <section className="min-w-0 space-y-4">
           <div className="flex items-center justify-between gap-3">
             <div>
               <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Recent Tasks</h3>
-              <p className="mt-1 text-sm text-slate-500">Latest items from the live task feed</p>
+              {/* <p className="mt-1 text-sm text-slate-500">Latest items from the live task feed</p> */}
             </div>
           </div>
           <TaskTable tasks={visibleTasks.slice(0, 8)} onSelect={(task) => navigate(`/tasks/${task._id}`)} />
         </section>
 
         <div className="space-y-6">
-          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_12px_40px_-28px_rgba(15,23,42,0.45)]">
+          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_12px_40px_-28px_rgba(15,23,42,0.45)] xl:mt-8">
             <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Upcoming Deadlines</h3>
             <div className="mt-5 space-y-3">
               {upcomingDeadlines.map((task) => (

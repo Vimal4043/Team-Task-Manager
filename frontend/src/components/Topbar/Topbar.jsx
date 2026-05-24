@@ -1,5 +1,5 @@
 import { Bell, Search, Menu, ChevronDown } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
@@ -14,6 +14,33 @@ const Topbar = ({ onMenuClick, searchValue, onSearchChange }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handlePointerDown = (event) => {
+      if (!menuRef.current?.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setMenuOpen(false);
+      }
+    };
+
+    if (menuOpen) {
+      document.addEventListener('mousedown', handlePointerDown);
+      document.addEventListener('touchstart', handlePointerDown);
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('touchstart', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [menuOpen]);
 
   const title = useMemo(() => {
     const exact = pageTitles[location.pathname];
@@ -43,25 +70,7 @@ const Topbar = ({ onMenuClick, searchValue, onSearchChange }) => {
           <h2 className="truncate text-lg font-semibold tracking-tight text-slate-950 sm:text-xl">{title}</h2>
         </div>
 
-        {/* <label className="hidden min-w-0 flex-1 items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-500 shadow-sm md:flex md:max-w-xl">
-          <Search size={16} />
-          <input
-            value={searchValue}
-            onChange={onSearchChange}
-            placeholder="Search projects, tasks, members..."
-            className="w-full bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400"
-          />
-        </label> */}
-
-        {/* <button
-          type="button"
-          className="hidden h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:inline-flex"
-          aria-label="Notifications"
-        >
-          <Bell size={18} />
-        </button> */}
-
-        <div className="relative">
+        <div ref={menuRef} className="relative">
           <button
             type="button"
             onClick={() => setMenuOpen((value) => !value)}

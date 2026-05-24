@@ -19,9 +19,13 @@ const CreateTask = () => {
     assignedTo: '',
     project: '',
     priority: 'medium',
-    status: 'todo',
     dueDate: '',
   });
+
+  const todayDate = new Date();
+  const minDueDate = new Date(todayDate.getTime() - todayDate.getTimezoneOffset() * 60000)
+    .toISOString()
+    .split('T')[0];
 
   useEffect(() => {
     const preload = async () => {
@@ -48,7 +52,6 @@ const CreateTask = () => {
             assignedTo: task.assignedTo?._id || '',
             project: task.project?._id || '',
             priority: task.priority || 'medium',
-            status: task.status || 'todo',
             dueDate: task.dueDate ? new Date(task.dueDate).toISOString().slice(0, 10) : '',
           });
         }
@@ -82,7 +85,6 @@ const CreateTask = () => {
           title: form.title,
           description: form.description,
           priority: form.priority,
-          status: form.status,
           dueDate: form.dueDate,
         };
 
@@ -125,14 +127,11 @@ const CreateTask = () => {
           </select>
         </div>
       ) : null}
-      <div className="grid gap-2 sm:grid-cols-3">
+      <div className="grid gap-2 sm:grid-cols-2">
         <select value={form.priority} className="rounded-2xl border border-slate-300 px-3 py-2" onChange={(e) => setForm((p) => ({ ...p, priority: e.target.value }))}>
           <option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="critical">Critical</option>
         </select>
-        <select value={form.status} className="rounded-2xl border border-slate-300 px-3 py-2" onChange={(e) => setForm((p) => ({ ...p, status: e.target.value }))}>
-          <option value="todo">Todo</option><option value="in-progress">In Progress</option><option value="completed">Completed</option>
-        </select>
-        <input type="date" required value={form.dueDate} className="rounded-2xl border border-slate-300 px-3 py-2" onChange={(e) => setForm((p) => ({ ...p, dueDate: e.target.value }))} />
+        <input type="date" required min={!isEditMode ? minDueDate : undefined} value={form.dueDate} className="rounded-2xl border border-slate-300 px-3 py-2" onChange={(e) => setForm((p) => ({ ...p, dueDate: e.target.value }))} />
       </div>
       {error ? <p className="text-sm text-rose-700">{error}</p> : null}
       <button type="submit" disabled={saving} className="rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-white">{saving ? (isEditMode ? 'Saving...' : 'Creating...') : (isEditMode ? 'Save Changes' : 'Create Task')}</button>

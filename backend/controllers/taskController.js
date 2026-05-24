@@ -11,7 +11,20 @@ const createTaskValidation = [
   body('project').isMongoId().withMessage('Valid project is required'),
   body('priority').optional().isIn(['low', 'medium', 'high', 'critical']).withMessage('Invalid priority'),
   body('status').optional().isIn(['todo', 'in-progress', 'completed']).withMessage('Invalid status'),
-  body('dueDate').isISO8601().withMessage('Valid due date is required'),
+  body('dueDate')
+    .isISO8601()
+    .withMessage('Valid due date is required')
+    .custom((value) => {
+      const selectedDate = new Date(value);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (selectedDate < today) {
+        throw new Error('Due date must be today or later');
+      }
+
+      return true;
+    }),
   validateRequest,
 ];
 
@@ -120,7 +133,7 @@ const getTaskById = async (req, res, next) => {
 
 const createTask = async (req, res, next) => {
   try {
-    const { title, description, assignedTo, project, priority, status, dueDate } = req.body;
+    const { title, description, assignedTo, project, priority, dueDate } = req.body;
 
     const [assignee, projectDoc] = await Promise.all([
       User.findById(assignedTo),
@@ -141,7 +154,7 @@ const createTask = async (req, res, next) => {
       assignedTo,
       project,
       priority: priority || 'medium',
-      status: status || 'todo',
+      status: 'todo',
       dueDate,
       createdBy: req.user._id,
       activityHistory: [
@@ -151,7 +164,7 @@ const createTask = async (req, res, next) => {
           meta: `Assigned to ${assignee.name}`,
         },
       ],
-      completedAt: status === 'completed' ? new Date() : undefined,
+      completedAt: undefined,
     });
 
     await Promise.all([
@@ -178,12 +191,29 @@ const updateTask = async (req, res, next) => {
     }
 
     if (req.user.role !== 'admin') {
-      const canEdit =
-        task.assignedTo.toString() === req.user._id.toString() ||
-        task.createdBy.toString() === req.user._id.toString();
+      const isAssignee = task.assignedTo.toString() === req.user._id.toString();
 
-      if (!canEdit) {
+      if (!isAssignee) {
         return res.status(403).json({ message: 'Not authorized to update this task' });
+      }
+
+      const allowedKeys = new Set(['status', 'comment']);
+      const invalidKeys = Object.keys(req.body).filter((key) => !allowedKeys.has(key));
+
+      if (invalidKeys.length) {
+        return res.status(403).json({ message: 'Members can only update task status or add comments' });
+      }
+
+      if (req.body.status !== undefined) {
+        const validTransitions = {
+          todo: ['in-progress'],
+          'in-progress': ['completed'],
+          completed: [],
+        };
+
+        if (req.body.status !== task.status && !validTransitions[task.status].includes(req.body.status)) {
+          return res.status(400).json({ message: 'Invalid task status transition' });
+        }
       }
     }
 

@@ -35,7 +35,6 @@ const App = () => {
           <Route path="/projects/:id" element={<ProjectDetails />} />
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/tasks/:id" element={<TaskDetails />} />
-          <Route path="/tasks/:id/edit" element={<CreateTask />} />
         </Route>
       </Route>
 
@@ -44,6 +43,7 @@ const App = () => {
           <Route path="/projects/create" element={<CreateProject />} />
           <Route path="/projects/:id/edit" element={<CreateProject />} />
           <Route path="/tasks/create" element={<CreateTask />} />
+          <Route path="/tasks/:id/edit" element={<CreateTask />} />
           <Route path="/team" element={<Team />} />
           <Route path="/team/members" element={<Members />} />
         </Route>
