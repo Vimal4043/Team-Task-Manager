@@ -11,7 +11,7 @@ const StatCard = ({ label, value, tone = 'amber' }) => {
       <p className="text-xs uppercase tracking-[0.2em] text-slate-500">{label}</p>
       <div className="mt-3 flex items-end justify-between">
         <p className="text-3xl font-semibold text-slate-900">{value}</p>
-        <span className={`h-2 w-20 rounded-full bg-gradient-to-r ${toneMap[tone]}`} />
+        <span className={`h-2 w-20 rounded-full bg-linear-to-r ${toneMap[tone]}`} />
       </div>
     </article>
   );
