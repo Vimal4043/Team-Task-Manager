@@ -12,17 +12,15 @@ const Tasks = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [filters, setFilters] = useState({ search: '', status: '', priority: '', sortBy: 'dueDate', order: 'asc' });
+  const [searchInput, setSearchInput] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [filters, setFilters] = useState({ status: '', priority: '', sortBy: 'dueDate', order: 'asc' });
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
         setLoading(true);
-        const params = Object.fromEntries(
-          Object.entries(filters).filter(([, value]) => value !== '' && value !== null && value !== undefined)
-        );
-
-        const { data } = await api.get('/tasks', { params });
+        const { data } = await api.get('/tasks');
         setTasks(data.tasks || []);
         setError('');
       } catch (err) {
@@ -33,19 +31,59 @@ const Tasks = () => {
     };
 
     fetchTasks();
-  }, [filters]);
+  }, []);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setDebouncedSearch(searchInput.trim().toLowerCase());
+    }, 250);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchInput]);
 
   const filtered = useMemo(() => {
-    if (!filters.search) return tasks;
-    return tasks.filter((task) => task.title.toLowerCase().includes(filters.search.toLowerCase()));
-  }, [tasks, filters.search]);
+    let nextTasks = [...tasks];
 
-  if (loading) return <Loader label="Loading tasks..." />;
+    if (debouncedSearch) {
+      nextTasks = nextTasks.filter((task) => task.title.toLowerCase().includes(debouncedSearch));
+    }
+
+    if (filters.status) {
+      nextTasks = nextTasks.filter((task) => task.status === filters.status);
+    }
+
+    if (filters.priority) {
+      nextTasks = nextTasks.filter((task) => task.priority === filters.priority);
+    }
+
+    nextTasks.sort((a, b) => {
+      const first = a?.[filters.sortBy];
+      const second = b?.[filters.sortBy];
+
+      if (filters.sortBy === 'dueDate') {
+        const firstDate = new Date(first).getTime();
+        const secondDate = new Date(second).getTime();
+        return filters.order === 'desc' ? secondDate - firstDate : firstDate - secondDate;
+      }
+
+      const firstValue = String(first || '').toLowerCase();
+      const secondValue = String(second || '').toLowerCase();
+      if (firstValue < secondValue) return filters.order === 'desc' ? 1 : -1;
+      if (firstValue > secondValue) return filters.order === 'desc' ? -1 : 1;
+      return 0;
+    });
+
+    return nextTasks;
+  }, [tasks, debouncedSearch, filters.status, filters.priority, filters.sortBy, filters.order]);
+
+  const isInitialLoading = loading && tasks.length === 0;
+
+  if (isInitialLoading) return <Loader label="Loading tasks..." />;
 
   return (
     <section className="space-y-5 min-w-0">
       <div className="grid gap-2 md:grid-cols-5">
-        <input value={filters.search} onChange={(e) => setFilters((p) => ({ ...p, search: e.target.value }))} placeholder="Search tasks" className="rounded-2xl border border-slate-300 px-3 py-2 text-sm" />
+        <input value={searchInput} onChange={(e) => setSearchInput(e.target.value)} placeholder="Search tasks" className="rounded-2xl border border-slate-300 px-3 py-2 text-sm" />
         <select value={filters.status} onChange={(e) => setFilters((p) => ({ ...p, status: e.target.value }))} className="rounded-2xl border border-slate-300 px-3 py-2 text-sm">
           <option value="">All status</option>
           <option value="todo">Todo</option>

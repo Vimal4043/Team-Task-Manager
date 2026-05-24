@@ -133,7 +133,7 @@ const createProject = async (req, res, next) => {
       return res.status(400).json({ message: 'Due date must be on or after start date' });
     }
 
-    const members = [...new Set([req.user._id.toString(), ...memberIds])];
+    const members = [...new Set(memberIds)];
     const validMembers = await User.find({ _id: { $in: members } }).select('_id');
 
     const projectData = {
@@ -193,7 +193,7 @@ const updateProject = async (req, res, next) => {
     }
 
     if (Array.isArray(req.body.memberIds)) {
-      const memberIds = [...new Set([req.user._id.toString(), ...req.body.memberIds])];
+      const memberIds = [...new Set(req.body.memberIds)];
       const validMembers = await User.find({ _id: { $in: memberIds } }).select('_id');
       project.members = validMembers.map((user) => user._id);
       await User.updateMany({ _id: { $in: validMembers.map((u) => u._id) } }, { $addToSet: { projects: project._id } });

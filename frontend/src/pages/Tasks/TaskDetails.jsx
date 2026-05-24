@@ -125,7 +125,7 @@ const TaskDetails = () => {
       return { label: 'Mark as Complete', nextStatus: 'completed', disabled: false };
     }
 
-    return { label: 'Completed', nextStatus: 'completed', disabled: true };
+    return null;
   };
 
   const memberAction = getMemberAction();
