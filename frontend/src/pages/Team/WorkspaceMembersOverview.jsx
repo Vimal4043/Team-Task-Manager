@@ -123,7 +123,6 @@ const WorkspaceMembersOverview = () => {
                     Tasks
                   </div>
                   <p className="mt-2 text-2xl font-semibold text-slate-950">{user.taskCount || 0}</p>
-                  <p className="mt-1 text-xs text-slate-500">Assigned tasks</p>
                 </div>
 
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-3">
@@ -132,7 +131,6 @@ const WorkspaceMembersOverview = () => {
                     Projects
                   </div>
                   <p className="mt-2 text-2xl font-semibold text-slate-950">{user.projectCount || 0}</p>
-                  <p className="mt-1 text-xs text-slate-500">Active projects</p>
                 </div>
               </div>
             </article>

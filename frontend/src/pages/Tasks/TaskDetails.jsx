@@ -194,6 +194,14 @@ const TaskDetails = () => {
               {isDeleting ? 'Deleting...' : 'Delete'}
             </button>
           ) : null}
+
+          <button
+            type="button"
+            onClick={() => navigate('/tasks')}
+            className="rounded-full border border-slate-300 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
+          >
+            Back to Tasks
+          </button>
         </div>
       </div>
 

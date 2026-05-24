@@ -112,7 +112,17 @@ const CreateTask = () => {
 
   return (
     <form onSubmit={submit} className="space-y-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-      <h1 className="text-lg font-semibold text-slate-900">{isEditMode ? 'Edit Task' : 'Create Task'}</h1>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="text-lg font-semibold text-slate-900">{isEditMode ? 'Edit Task' : 'Create Task'}</h1>
+        <button
+          type="button"
+          onClick={() => navigate('/projects')}
+          className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white hover:text-slate-900 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-slate-200"
+        >
+          <span className="text-base leading-none">←</span>
+          <span>Back to Projects</span>
+        </button>
+      </div>
       <input required placeholder="Task title" className="w-full rounded-2xl border border-slate-300 px-3 py-2" value={form.title} onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))} />
       <textarea placeholder="Description" className="w-full rounded-2xl border border-slate-300 px-3 py-2" value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} />
       {(!isEditMode || user?.role === 'admin') ? (

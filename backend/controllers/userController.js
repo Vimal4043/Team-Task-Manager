@@ -18,7 +18,10 @@ const getUsers = async (req, res, next) => {
       users.map(async (user) => {
         const [taskCount, projectCount] = await Promise.all([
           Task.countDocuments({ assignedTo: user._id }),
-          Project.countDocuments({ members: user._id, status: 'active' }),
+          Project.countDocuments({
+            members: user._id,
+            status: { $ne: 'completed' },
+          }),
         ]);
 
         return {
