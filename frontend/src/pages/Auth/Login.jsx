@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import AuthForm from '../../components/Auth/AuthForm';
 import { useAuth } from '../../context/AuthContext';
+import Loader from '../../components/Utils/Loader';
 
 const Login = () => {
-  const { login } = useAuth();
+  const { login, isAuthenticated, authLoading, user } = useAuth();
   const navigate = useNavigate();
   const [values, setValues] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
@@ -23,6 +24,14 @@ const Login = () => {
       setLoading(false);
     }
   };
+
+  if (authLoading) {
+    return <Loader label="Checking session..." />;
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to={user?.role === 'admin' ? '/dashboard' : '/projects'} replace />;
+  }
 
   return (
     <div className="grid min-h-screen place-items-center bg-app-pattern px-4 py-10">
