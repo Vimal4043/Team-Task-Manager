@@ -114,7 +114,7 @@ const CreateTask = () => {
       <input required placeholder="Task title" className="w-full rounded-2xl border border-slate-300 px-3 py-2" value={form.title} onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))} />
       <textarea placeholder="Description" className="w-full rounded-2xl border border-slate-300 px-3 py-2" value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} />
       {(!isEditMode || user?.role === 'admin') ? (
-        <>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <select required value={form.project} className="w-full rounded-2xl border border-slate-300 px-3 py-2" onChange={(e) => setForm((p) => ({ ...p, project: e.target.value }))}>
             <option value="">Select project</option>
             {projects.map((project) => <option key={project._id} value={project._id}>{project.title}</option>)}
@@ -123,7 +123,7 @@ const CreateTask = () => {
             <option value="">Assign user</option>
             {eligibleUsers.map((u) => <option key={u._id} value={u._id}>{u.name}</option>)}
           </select>
-        </>
+        </div>
       ) : null}
       <div className="grid gap-2 sm:grid-cols-3">
         <select value={form.priority} className="rounded-2xl border border-slate-300 px-3 py-2" onChange={(e) => setForm((p) => ({ ...p, priority: e.target.value }))}>
