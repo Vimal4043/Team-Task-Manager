@@ -10,7 +10,7 @@
     "check": "node --check server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Vimal Kumar",
   "license": "ISC",
   "type": "module",
   "engines": {

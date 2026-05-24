@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import api from '../../api/axios';
 import Loader from '../../components/Utils/Loader';
 import EmptyState from '../../components/Utils/EmptyState';
+import ConfirmDeleteCard from '../../components/Utils/ConfirmDeleteCard';
 import { useAuth } from '../../context/AuthContext';
 
 const ProjectDetails = () => {
@@ -14,6 +15,7 @@ const ProjectDetails = () => {
   const [error, setError] = useState('');
   const [actionError, setActionError] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const isAdmin = user?.role === 'admin';
 
@@ -39,12 +41,10 @@ const ProjectDetails = () => {
   const handleDelete = async () => {
     if (!isAdmin || !project) return;
 
-    const confirmed = window.confirm(`Delete project "${project.title}"? This action cannot be undone.`);
-    if (!confirmed) return;
-
     try {
       setIsDeleting(true);
       setActionError('');
+      setShowDeleteConfirm(false);
       await api.delete(`/projects/${id}`);
       navigate('/projects');
     } catch (err) {
@@ -75,11 +75,14 @@ const ProjectDetails = () => {
             </button>
             <button
               type="button"
-              onClick={handleDelete}
+              onClick={() => {
+                setActionError('');
+                setShowDeleteConfirm(true);
+              }}
               disabled={isDeleting}
               className="rounded-full bg-rose-600 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-white disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {isDeleting ? 'Deleting...' : 'Delete'}
+              Delete
             </button>
           </div>
         ) : null}
@@ -114,6 +117,16 @@ const ProjectDetails = () => {
           ))}
         </div>
       </div>
+
+      <ConfirmDeleteCard
+        open={showDeleteConfirm}
+        title={`Delete project "${project.title}"?`}
+        message="This action cannot be undone. The project and its related data will be removed from the workspace."
+        confirmLabel="Delete project"
+        onCancel={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDelete}
+        loading={isDeleting}
+      />
     </section>
   );
 };

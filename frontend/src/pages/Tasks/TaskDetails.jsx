@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import api from '../../api/axios';
 import Loader from '../../components/Utils/Loader';
 import EmptyState from '../../components/Utils/EmptyState';
+import ConfirmDeleteCard from '../../components/Utils/ConfirmDeleteCard';
 import { useAuth } from '../../context/AuthContext';
 
 const TaskDetails = () => {
@@ -15,6 +16,7 @@ const TaskDetails = () => {
   const [actionError, setActionError] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [comment, setComment] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const currentUserId = user?._id || user?.id;
   const isAssignedToCurrentUser = currentUserId && currentUserId === task?.assignedTo?._id;
@@ -97,12 +99,10 @@ const TaskDetails = () => {
   const deleteTask = async () => {
     if (!canDelete || !task) return;
 
-    const confirmed = window.confirm(`Delete task "${task.title}"? This action cannot be undone.`);
-    if (!confirmed) return;
-
     try {
       setIsDeleting(true);
       setActionError('');
+      setShowDeleteConfirm(false);
       await api.delete(`/tasks/${id}`);
       navigate('/tasks');
     } catch (err) {
@@ -187,11 +187,14 @@ const TaskDetails = () => {
           {canDelete ? (
             <button
               type="button"
-              onClick={deleteTask}
+              onClick={() => {
+                setActionError('');
+                setShowDeleteConfirm(true);
+              }}
               disabled={isDeleting}
               className="rounded-full bg-rose-600 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-white disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {isDeleting ? 'Deleting...' : 'Delete'}
+              Delete
             </button>
           ) : null}
 
@@ -254,6 +257,16 @@ const TaskDetails = () => {
           ))}
         </div>
       </div>
+
+      <ConfirmDeleteCard
+        open={showDeleteConfirm}
+        title={`Delete task "${task.title}"?`}
+        message="This action cannot be undone. The task will be removed from the workspace."
+        confirmLabel="Delete task"
+        onCancel={() => setShowDeleteConfirm(false)}
+        onConfirm={deleteTask}
+        loading={isDeleting}
+      />
     </section>
   );
 };
