@@ -27,12 +27,12 @@ const register = async (req, res, next) => {
       return res.status(409).json({ message: 'Email already in use' });
     }
 
-    const hashPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
       name,
       email,
-      password: hashPassword,
+      password: hashedPassword,
       role: role || 'member',
     });
 
@@ -62,7 +62,7 @@ const login = async (req, res, next) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    const isPasswordCorrect = await user.matchPassword(password);
     if (!isPasswordCorrect) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
