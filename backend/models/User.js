@@ -41,12 +41,6 @@ const userSchema = new mongoose.Schema(
         ref: 'Project',
       },
     ],
-    teams: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Team',
-      },
-    ],
     isActive: {
       type: Boolean,
       default: true,

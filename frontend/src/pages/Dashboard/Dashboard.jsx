@@ -22,29 +22,28 @@ const Dashboard = () => {
         // Fetch tasks (for list + recent activity)
         const tasksPromise = api.get('/tasks', { params: { sortBy: 'dueDate', order: 'asc' } });
 
-        // Fetch projects and teams (stats)
-
+        // Fetch projects for collaboration stats
         const projectsPromise = api.get('/projects');
-        const usersPromise = api.get('/users');
 
-        const [tasksResponse, projectsResponse, usersResponse] = await Promise.all([
+        const [tasksResponse, projectsResponse] = await Promise.all([
           tasksPromise,
           projectsPromise,
-          usersPromise,
         ]);
 
         const tasksData = tasksResponse.data.tasks || [];
         const projectsData = projectsResponse.data.projects || [];
-        const usersData = usersResponse.data.users || [];
 
-        // Derive unique teams from users' teams arrays
-        const teamIds = new Set();
-        usersData.forEach((u) => {
-          if (Array.isArray(u.teams)) {
-            u.teams.forEach((t) => teamIds.add(String(t._id || t)));
+        // Derive unique collaboration groups from project membership sets
+        const collaborationGroups = new Set();
+        projectsData.forEach((project) => {
+          const memberIds = Array.isArray(project.members)
+            ? project.members.map((member) => String(member._id || member)).sort()
+            : [];
+
+          if (memberIds.length) {
+            collaborationGroups.add(memberIds.join(','));
           }
         });
-        const teamsData = Array.from(teamIds);
 
         // Compute basic stats similar to previous /dashboard response
         const totalTasks = tasksData.length;
@@ -59,7 +58,7 @@ const Dashboard = () => {
             pendingTasks,
             overdueTasks,
             totalProjects: projectsData.length,
-            totalTeams: teamsData.length,
+            totalTeams: collaborationGroups.size,
             totalUsers: null,
           },
         });

@@ -1,7 +1,6 @@
 import { body, param, query } from 'express-validator';
 import Project from '../models/Project.js';
 import Task from '../models/Task.js';
-import Team from '../models/Team.js';
 import User from '../models/User.js';
 import { validateRequest } from '../utils/validators.js';
 
@@ -24,7 +23,6 @@ const createProjectValidation = [
       return true;
     }),
   body('memberIds').optional().isArray().withMessage('memberIds must be an array'),
-  body('teamId').optional().isMongoId().withMessage('teamId must be valid'),
   validateRequest,
 ];
 
@@ -79,7 +77,6 @@ const getProjects = async (req, res, next) => {
     const projects = await Project.find(filter)
       .populate('createdBy', 'name email role')
       .populate('members', 'name email role')
-      .populate('team', 'name')
       .populate('tasks', 'title status dueDate priority assignedTo')
       .sort({ createdAt: -1 });
 
@@ -94,7 +91,6 @@ const getProjectById = async (req, res, next) => {
     const project = await Project.findById(req.params.id)
       .populate('createdBy', 'name email role')
       .populate('members', 'name email role')
-      .populate('team', 'name members')
       .populate({
         path: 'tasks',
         populate: { path: 'assignedTo', select: 'name email role' },
@@ -124,7 +120,6 @@ const createProject = async (req, res, next) => {
       description,
       status,
       memberIds = [],
-      teamId,
       startDate,
       endDate,
     } = req.body;
@@ -146,26 +141,13 @@ const createProject = async (req, res, next) => {
       endDate,
     };
 
-    if (teamId) {
-      const team = await Team.findById(teamId);
-      if (!team) {
-        return res.status(404).json({ message: 'Team not found' });
-      }
-      projectData.team = teamId;
-    }
-
     const project = await Project.create(projectData);
 
     await User.updateMany({ _id: { $in: project.members } }, { $addToSet: { projects: project._id } });
 
-    if (teamId) {
-      await Team.findByIdAndUpdate(teamId, { $addToSet: { projects: project._id } });
-    }
-
     const populatedProject = await Project.findById(project._id)
       .populate('createdBy', 'name email role')
-      .populate('members', 'name email role')
-      .populate('team', 'name');
+      .populate('members', 'name email role');
 
     return res.status(201).json({ message: 'Project created', project: populatedProject });
   } catch (error) {
@@ -217,7 +199,6 @@ const deleteProject = async (req, res, next) => {
     }
 
     await Task.deleteMany({ project: project._id });
-    await Team.updateMany({ projects: project._id }, { $pull: { projects: project._id } });
     await User.updateMany({ projects: project._id }, { $pull: { projects: project._id } });
     await project.deleteOne();
 

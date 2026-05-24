@@ -1,4 +1,6 @@
 import { body, param } from 'express-validator';
+import Project from '../models/Project.js';
+import Task from '../models/Task.js';
 import User from '../models/User.js';
 import { validateRequest } from '../utils/validators.js';
 
@@ -10,14 +12,24 @@ const updateUserRoleValidation = [
 
 const getUsers = async (req, res, next) => {
   try {
-    const users = await User.find()
-      .select('-password')
-      .populate('assignedTasks', 'title status dueDate priority')
-      .populate('projects', 'title status progress')
-      .populate({ path: 'teams', select: 'name description members', populate: { path: 'members.user', select: 'name email role' } })
-      .sort({ createdAt: -1 });
+    const users = await User.find().select('-password').sort({ createdAt: -1 }).lean();
 
-    return res.status(200).json({ users });
+    const enrichedUsers = await Promise.all(
+      users.map(async (user) => {
+        const [taskCount, projectCount] = await Promise.all([
+          Task.countDocuments({ assignedTo: user._id }),
+          Project.countDocuments({ members: user._id, status: 'active' }),
+        ]);
+
+        return {
+          ...user,
+          taskCount,
+          projectCount,
+        };
+      }),
+    );
+
+    return res.status(200).json({ users: enrichedUsers });
   } catch (error) {
     return next(error);
   }
@@ -28,8 +40,7 @@ const getUserById = async (req, res, next) => {
     const user = await User.findById(req.params.id)
       .select('-password')
       .populate('assignedTasks', 'title status dueDate priority')
-      .populate('projects', 'title status progress')
-      .populate({ path: 'teams', select: 'name description members', populate: { path: 'members.user', select: 'name email role' } });
+      .populate('projects', 'title status progress');
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -71,8 +82,7 @@ const getProfile = async (req, res, next) => {
     const user = await User.findById(req.user._id)
       .select('-password')
       .populate('assignedTasks', 'title status dueDate priority project')
-      .populate('projects', 'title status progress')
-      .populate({ path: 'teams', select: 'name description members', populate: { path: 'members.user', select: 'name email role' } });
+      .populate('projects', 'title status progress');
 
     return res.status(200).json({ user });
   } catch (error) {

@@ -148,6 +148,14 @@ const createTask = async (req, res, next) => {
       return res.status(404).json({ message: 'Project not found' });
     }
 
+    const isAssigneeProjectMember = projectDoc.members.some(
+      (memberId) => memberId.toString() === assignee._id.toString(),
+    );
+
+    if (!isAssigneeProjectMember) {
+      return res.status(400).json({ message: 'Assigned user must be a member of the selected project' });
+    }
+
     const task = await Task.create({
       title,
       description,
@@ -220,6 +228,24 @@ const updateTask = async (req, res, next) => {
     const previousStatus = task.status;
     const previousAssignee = task.assignedTo.toString();
     const previousProject = task.project.toString();
+
+    const nextProjectId = req.body.project || previousProject;
+    const nextAssigneeId = req.body.assignedTo || previousAssignee;
+
+    if (req.body.project !== undefined || req.body.assignedTo !== undefined) {
+      const projectDoc = await Project.findById(nextProjectId).select('members');
+      if (!projectDoc) {
+        return res.status(404).json({ message: 'Project not found' });
+      }
+
+      const isAssigneeProjectMember = projectDoc.members.some(
+        (memberId) => memberId.toString() === nextAssigneeId.toString(),
+      );
+
+      if (!isAssigneeProjectMember) {
+        return res.status(400).json({ message: 'Assigned user must be a member of the selected project' });
+      }
+    }
 
     const updates = ['title', 'description', 'assignedTo', 'project', 'priority', 'status', 'dueDate'];
     updates.forEach((field) => {

@@ -91,6 +91,130 @@ Optional sample data:
 
 ## Vercel Deployment (Frontend)
 
-1. Deploy `frontend` project to Vercel
-2. Set `VITE_API_URL` to your Railway backend URL ending in `/api`
-3. `vercel.json` handles SPA route rewrites
+# Team Task Manager (MERN)
+
+A production-ready Team Task Manager built with MongoDB, Express, React (Vite), and Node.js. It includes JWT authentication, role-based access (Admin / Member), and a REST API powering a responsive React UI.
+
+**Highlights**
+- **Auth:** JWT with secure password hashing (bcryptjs).
+- **Roles:** Admin-only routes and actions.
+- **Architecture:** MVC backend with centralized middleware.
+- **Data model:** Projects, Tasks, Teams, Users with Mongoose refs and population.
+- **Frontend:** React (Vite) with protected routes, context-based auth, and Axios interceptors.
+
+---
+
+**Tech stack**
+- Backend: Node.js, Express, MongoDB, Mongoose
+- Frontend: React, Vite, Tailwind CSS
+- Auth: JWT, bcryptjs
+
+---
+
+## Quick Start
+
+Prerequisites: Node.js 18+, npm, and a MongoDB instance (local or hosted).
+
+1) Backend
+
+```bash
+cd backend
+npm install
+cp .env.example .env
+# Edit .env to set MONGODB_URI, JWT_SECRET, CLIENT_URL
+npm run dev
+```
+
+Optional: Seed sample data
+
+```bash
+npm run seed
+```
+
+2) Frontend
+
+```bash
+cd frontend
+npm install
+cp .env.example .env
+# Set VITE_API_URL to your backend API (e.g. http://localhost:5000/api)
+npm run dev
+```
+
+---
+
+## Environment variables
+
+- Backend (copy to `backend/.env`):
+
+```
+MONGODB_URI=your-mongodb-uri
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRES_IN=7d
+CLIENT_URL=http://localhost:5173
+PORT=5000
+```
+
+- Frontend (copy to `frontend/.env`):
+
+```
+VITE_API_URL=http://localhost:5000/api
+```
+
+---
+
+## API Summary (most-used endpoints)
+
+- Auth
+	- POST `/api/auth/register` — register a new user
+	- POST `/api/auth/login` — login (returns JWT)
+	- GET `/api/auth/me` — current user data
+
+- Users (admin)
+	- GET `/api/users` — list users
+	- GET `/api/users/:id` — user details
+	- PUT `/api/users/:id/role` — update role
+
+- Projects
+	- GET `/api/projects` — list projects
+	- GET `/api/projects/:id` — project details
+	- POST `/api/projects` — create (admin)
+	- PUT `/api/projects/:id` — update (admin)
+	- DELETE `/api/projects/:id` — delete (admin)
+
+- Tasks
+	- GET `/api/tasks` — list tasks
+	- GET `/api/tasks/:id` — task details
+	- POST `/api/tasks` — create (admin)
+	- PUT `/api/tasks/:id` — update
+	- DELETE `/api/tasks/:id` — delete (admin)
+
+- Teams
+	- GET `/api/teams` — list teams
+	- POST `/api/teams` — create (admin)
+	- PUT `/api/teams/:id` — update (admin)
+	- POST `/api/teams/:id/members` — add member (admin)
+	- DELETE `/api/teams/:id/members` — remove member (admin)
+
+---
+
+## Deployment notes
+
+- Backend: Railway is configured via `railway.json`. Ensure `MONGODB_URI`, `JWT_SECRET`, `JWT_EXPIRES_IN`, and `CLIENT_URL` are set. Start command: `npm start`.
+- Frontend: Vercel works with `VITE_API_URL` pointing to the backend API (include `/api` suffix if needed). `vercel.json` handles SPA rewrites.
+
+---
+
+## Development tips
+- Use Postman or Insomnia to exercise the API endpoints during development.
+- The frontend includes an Axios instance with an interceptor at `frontend/src/api/axios.js` to attach the JWT to requests.
+
+---
+
+## Contributing
+- Open an issue or submit a pull request. Keep changes focused and add tests when possible.
+
+---
+
+## License
+This project is provided as-is. Add a license file if you plan to open source it.

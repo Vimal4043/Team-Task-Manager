@@ -36,10 +36,6 @@ const projectSchema = new mongoose.Schema(
         ref: 'Task',
       },
     ],
-    team: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Team',
-    },
     startDate: {
       type: Date,
       default: Date.now,
