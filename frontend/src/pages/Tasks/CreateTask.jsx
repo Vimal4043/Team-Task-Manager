@@ -147,7 +147,18 @@ const CreateTask = () => {
         <input type="date" required min={!isEditMode ? minDueDate : undefined} value={form.dueDate} className="rounded-2xl border border-slate-300 px-3 py-2" onChange={(e) => setForm((p) => ({ ...p, dueDate: e.target.value }))} />
       </div>
       {error ? <p className="text-sm text-rose-700">{error}</p> : null}
-      <button type="submit" disabled={saving} className="rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-white">{saving ? (isEditMode ? 'Saving...' : 'Creating...') : (isEditMode ? 'Save Changes' : 'Create Task')}</button>
+      <div className="flex flex-wrap items-center gap-3">
+        <button type="submit" disabled={saving} className="rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-white">{saving ? (isEditMode ? 'Saving...' : 'Creating...') : (isEditMode ? 'Save Changes' : 'Create Task')}</button>
+        {isEditMode ? (
+          <button
+            type="button"
+            onClick={() => navigate(`/tasks/${id}`)}
+            className="rounded-full border border-slate-300 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
+          >
+            Cancel
+          </button>
+        ) : null}
+      </div>
     </form>
   );
 };
