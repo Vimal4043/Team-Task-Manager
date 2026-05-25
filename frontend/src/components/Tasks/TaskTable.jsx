@@ -47,12 +47,12 @@ const TaskTable = ({ tasks, onSelect }) => {
               <td className="px-4 py-3 text-slate-600">{task.project?.title || 'Unknown'}</td>
               <td className="px-4 py-3 text-slate-600">{task.assignedTo?.name || 'Unassigned'}</td>
               <td className="px-4 py-3">
-                <span className={`rounded-full px-2 py-1 text-xs font-semibold uppercase ${getPriorityStyles(task.priority)}`}>
+                <span className={`rounded-full px-2 py-1 text-xs font-semibold uppercase whitespace-nowrap ${getPriorityStyles(task.priority)}`}>
                   {task.priority}
                 </span>
               </td>
               <td className="px-4 py-3">
-                <span className={`rounded-full px-2 py-1 text-xs font-semibold uppercase ${getStatusStyles(task.status)}`}>
+                <span className={`rounded-full px-2 py-1 text-xs font-semibold uppercase whitespace-nowrap ${getStatusStyles(task.status)}`}>
                   {task.status}
                 </span>
               </td>
